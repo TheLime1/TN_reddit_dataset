@@ -22,7 +22,7 @@ jobs:
 
           # The type of repo you are syncing to: model, dataset, or space.
           # Defaults to space.
-          repo_type: "model"
+          repo_type: "dataset"
 
           # If true and the Hugging Face repo doesn't already exist, it will be created
           # as a private repo.
