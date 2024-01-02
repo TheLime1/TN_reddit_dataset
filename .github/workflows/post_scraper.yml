@@ -35,8 +35,8 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add codes.txt
-          git commit -m "Update code links"
+          git add output_posts_after2022.csv
+          git commit -m "Update post data set"
           git -c http.extraheader="AUTHORIZATION: basic ${{ secrets.GTOKEN }}" push
         env:
           GTOKEN: ${{ secrets.GTOKEN }}
