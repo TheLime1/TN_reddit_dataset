@@ -5,7 +5,7 @@ import pandas as pd
 import os
 from datetime import datetime
 
-FILENAME_POSTS = 'output_posts.csv'
+FILENAME_POSTS = 'output_posts_after2022.csv'
 
 
 def create_reddit_instance():
@@ -83,9 +83,6 @@ def main():
         except prawcore.exceptions.TooManyRequests:
             print("Hit rate limit, sleeping .....")
             time.sleep(60)
-
-    # Reverse the order of the DataFrame
-    df_posts = df_posts.iloc[::-1]
 
     save_data(df_posts, FILENAME_POSTS)
     print('Finished scraping')
