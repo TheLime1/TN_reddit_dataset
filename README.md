@@ -10,3 +10,5 @@ This repository contains two datasets:
 `id,url,score,title,body,top_comment1,top_comment2,top_comment3,top_comment4,top_comment5,date`
 
 Data gap between 2023-01-01 to 2023-11-29.
+
+https://flatgithub.com/TheLime1/TN_reddit_dataset
