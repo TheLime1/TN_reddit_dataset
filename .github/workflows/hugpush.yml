@@ -10,6 +10,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Filter CSV files
+        run: |
+          mkdir -p csv_files
+          find . -name "*.csv" -exec cp {} csv_files/ \;
+
       - uses: backendcloud/hugging-push@v0.2.3
         with:
           # The Hugging Face repo id you want to sync to.
@@ -36,3 +44,4 @@ jobs:
           #
           # This option is especially important if the repo has not been created yet.
           # It won't really be used if the repo already exists.
+        working-directory: csv_files
