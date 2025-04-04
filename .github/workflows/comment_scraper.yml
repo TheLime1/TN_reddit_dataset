@@ -29,6 +29,17 @@ jobs:
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
 
+      - name: Set up Git LFS
+        run: |
+          curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Track large file with Git LFS
+        run: |
+          git lfs track "output_comments_after2022.csv"
+          git add .gitattributes
+
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions Bot"
