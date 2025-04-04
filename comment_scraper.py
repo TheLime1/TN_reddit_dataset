@@ -3,7 +3,8 @@ import pandas as pd
 import os
 from datetime import datetime
 
-FILENAME_COMMENTS = 'output_comments_after2022.csv'
+# Remove the single output file constant
+# FILENAME_COMMENTS = 'output_comments_after2022.csv'
 
 
 def create_reddit_instance():
@@ -20,14 +21,18 @@ def get_subreddit(reddit, subreddit_name):
     return subreddit
 
 
-def load_existing_data(file_name):
+def load_existing_data(year):
+    # Create the data directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+    
+    file_name = f'data/comments_{year}.csv'
     if os.path.exists(file_name):
         df = pd.read_csv(file_name)
         existing_ids = df['id'].tolist()
     else:
-        df = pd.DataFrame()
+        df = pd.DataFrame(columns=['id', 'url', 'score', 'body', 'date'])
         existing_ids = []
-    return df, existing_ids
+    return df, existing_ids, file_name
 
 
 def get_new_comment_row(comment):
@@ -49,7 +54,11 @@ def save_data(df, file_name):
 def main():
     reddit = create_reddit_instance()
     subreddit = get_subreddit(reddit, 'tunisia')
-    df_comments, existing_comment_ids = load_existing_data(FILENAME_COMMENTS)
+    
+    # Dict to store dataframes by year
+    year_dfs = {}
+    year_existing_ids = {}
+    year_filenames = {}
 
     print('Starting to scrape comments')
 
@@ -57,16 +66,28 @@ def main():
     new_comments = list(subreddit.comments(limit=1000))
 
     for comment in new_comments:
-        if comment.id in existing_comment_ids or comment.created_utc < 1672444800:  # Skip comments before 2022
-            print(f'Skipped comment {comment.id}')
+        date = datetime.fromtimestamp(comment.created)
+        year = date.year
+        
+        # If we haven't loaded this year's data yet, load it
+        if year not in year_dfs:
+            year_dfs[year], year_existing_ids[year], year_filenames[year] = load_existing_data(year)
+        
+        # Skip if already processed
+        if comment.id in year_existing_ids[year]:
+            print(f'Skipped comment {comment.id} (already in {year} data)')
             continue
+            
         new_row = get_new_comment_row(comment)
-        df_comments = df_comments._append(new_row, ignore_index=True)
-        save_data(df_comments, FILENAME_COMMENTS)
-        print(f'Loaded comment {comment.id}')
+        year_dfs[year] = year_dfs[year]._append(new_row, ignore_index=True)
+        print(f'Added comment {comment.id} to {year} data')
+
+    # Save each year's data to its respective file
+    for year, df in year_dfs.items():
+        save_data(df, year_filenames[year])
+        print(f"Data for {year} saved to {year_filenames[year]}")
 
     print('Finished scraping')
-    print("Data saved to ", FILENAME_COMMENTS)
 
 
 if __name__ == "__main__":
