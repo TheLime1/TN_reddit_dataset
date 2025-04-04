@@ -51,9 +51,11 @@ def get_top_comments(submission):
 
 def get_new_post_row(submission, top_comments):
     date = datetime.fromtimestamp(submission.created)
+    # Use the correct Reddit URL format
+    reddit_url = f"https://www.reddit.com/r/Tunisia/comments/{submission.id}/"
     new_row = {
         "id": submission.id,
-        "url": submission.url,
+        "url": reddit_url,  # Use our formatted URL instead of submission.url
         "score": submission.score,
         "title": submission.title,
         "body": submission.selftext,
