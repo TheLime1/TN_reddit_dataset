@@ -37,15 +37,15 @@ jobs:
 
       - name: Track large file with Git LFS
         run: |
-          git lfs track "output_comments_after2022.csv"
+          git lfs track "data/*.csv"
           git add .gitattributes
 
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add output_comments_after2022.csv
-          git commit -m "Update comment data set"
-          git -c http.extraheader="AUTHORIZATION: basic ${{ secrets.GTOKEN }}" push
+          git add data/comments_*.csv
+          git commit -m "Update comment data sets" || echo "No changes to commit"
+          git -c http.extraheader="AUTHORIZATION: basic ${{ secrets.GTOKEN }}" push || echo "No changes to push"
         env:
           GTOKEN: ${{ secrets.GTOKEN }}
