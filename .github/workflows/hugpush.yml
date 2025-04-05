@@ -17,15 +17,17 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-      - name: Create temporary repository with data and README
+      - name: Create temporary repository with data, README and LICENSE
         run: |
           mkdir -p /tmp/data_repo
           cp -r data/* /tmp/data_repo/
           cp README.md /tmp/data_repo/
+          cp LICENSE /tmp/data_repo/
           cd /tmp/data_repo
           git init
           git add .
-          git commit -m "Push data and README to Hugging Face"
+          git commit -m "Push data, README and LICENSE to Hugging Face"
+          git branch -M main  # Rename the current branch to main
 
       - name: Push to Hugging Face
         working-directory: /tmp/data_repo
