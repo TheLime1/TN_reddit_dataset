@@ -17,6 +17,12 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-lfs
+          git lfs install
+
       - name: Create temporary repository with data, README and LICENSE
         run: |
           mkdir -p /tmp/data_repo
@@ -25,6 +31,12 @@ jobs:
           cp LICENSE /tmp/data_repo/
           cd /tmp/data_repo
           git init
+          git lfs install
+          
+          # Track large CSV files with Git LFS
+          git lfs track "*.csv"
+          git add .gitattributes
+          
           git add .
           git commit -m "Push data, README and LICENSE to Hugging Face"
           git branch -M main  # Rename the current branch to main
@@ -37,4 +49,5 @@ jobs:
           git remote add hf https://huggingface.co/datasets/Lime1/Tunisian_reddit
           echo -e "machine huggingface.co\nlogin api\npassword $HF_TOKEN" > ~/.netrc
           chmod 600 ~/.netrc
+          git lfs push --all hf main
           git push -f hf main
