@@ -34,7 +34,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://huggingface.co/datasets/Tunisian_reddit
+          git remote add hf https://huggingface.co/datasets/Lime1/Tunisian_reddit
           echo -e "machine huggingface.co\nlogin api\npassword $HF_TOKEN" > ~/.netrc
           chmod 600 ~/.netrc
           git push -f hf main
