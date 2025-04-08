@@ -5,9 +5,6 @@ import pandas as pd
 import os
 from datetime import datetime
 
-# Remove the single output file constant
-# FILENAME_POSTS = 'output_posts_after2022.csv'
-
 
 def create_reddit_instance():
     reddit = praw.Reddit(
@@ -27,17 +24,32 @@ def load_existing_data(year):
     # Create the data directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
     
+    # Define the expected columns
+    columns = [
+        'id', 'url', 'score', 'title', 'body', 
+        'top_comment1', 'top_comment2', 'top_comment3', 
+        'top_comment4', 'top_comment5', 'date'
+    ]
+    
     file_name = f'data/posts_{year}.csv'
     if os.path.exists(file_name):
-        df = pd.read_csv(file_name)
-        existing_ids = df['id'].tolist()
+        try:
+            df = pd.read_csv(file_name)
+            # Check if 'id' column exists
+            if 'id' in df.columns:
+                existing_ids = df['id'].tolist()
+            else:
+                print(f"Warning: 'id' column not found in {file_name}. Creating a new DataFrame.")
+                df = pd.DataFrame(columns=columns)
+                existing_ids = []
+        except Exception as e:
+            print(f"Error loading {file_name}: {str(e)}. Creating a new DataFrame.")
+            df = pd.DataFrame(columns=columns)
+            existing_ids = []
     else:
-        df = pd.DataFrame(columns=[
-            'id', 'url', 'score', 'title', 'body', 
-            'top_comment1', 'top_comment2', 'top_comment3', 
-            'top_comment4', 'top_comment5', 'date'
-        ])
+        df = pd.DataFrame(columns=columns)
         existing_ids = []
+    
     return df, existing_ids, file_name
 
 
